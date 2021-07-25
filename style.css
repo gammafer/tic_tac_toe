@@ -1,0 +1,43 @@
+.chooseSide{
+    margin:0 auto;
+    text-align: center;
+    padding:40px;
+}
+.chooseSide>button{
+    margin:5px;
+    font-size: 4rem;
+    width: 100px;
+    border-radius: 10px;
+    background-color: rgba(182, 204, 238, 0.76);
+}
+button.restart{
+    width:300px;
+}
+.gameScreen{
+    display: flex;
+    flex-wrap: wrap;
+    height: 70vh;
+    width:70vw;
+    border:1px solid black;
+    margin:0 auto;
+    
+}
+
+.gameScreen>div{
+    border: 2px solid black;
+    margin:0;
+    flex-basis: 33%;
+    height: 33.3%;
+    text-align: center;
+    font-size: 4rem;
+    align-items: center;
+    
+}
+
+.gameScreen>div:hover{
+    background-color:aquamarine;
+    
+}
+p{
+    vertical-align: middle;
+}
