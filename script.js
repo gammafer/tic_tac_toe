@@ -27,6 +27,7 @@ const GameFlow=(()=>{
 
     let player;
     let enemy;
+    let filledField=0;
     let x=document.getElementById('signX');
     let o=document.getElementById('signO');
     let restart=document.getElementById('restartBtn');
@@ -47,24 +48,30 @@ const GameFlow=(()=>{
 
     const chooseSide=()=>{
         
+        if(localStorage.getItem('_board')==null){
 
-        x.addEventListener('click',function(){
-            player=Player('player','X');
-            enemy = Player('enemy', 'O');
-            disableBtns();
+            x.addEventListener('click',function(){
+                player= Player('player', 'X');
+                enemy = Player('enemy' , 'O');
+                disableBtns();
+                startGame();
+            });
+
+
+
+            o.addEventListener('click',function(){
+                player=Player('player','O');
+                enemy = Player('enemy', 'X');
+                disableBtns();
+                startGame();
+            });
+        }
+        else{
             startGame();
-        });
-
-
-
-        o.addEventListener('click',function(){
-            player=Player('player','O');
-            enemy = Player('enemy', 'X');
-            disableBtns();
-            startGame();
-        });
-        
+        }
     }
+        
+    
     const disableBtns=()=>{
         x.disabled = "disabled";
         o.disabled = "disabled";
@@ -72,27 +79,53 @@ const GameFlow=(()=>{
 
     const startGame=()=>{
 
-    let newBoard= Gameboard.toBeOrNotToBe();
-    for(let i=0;i<newBoard.length;i++){
-        if(newBoard[i]==undefined){
-            newBoard[i]='';
+        let newBoard= Gameboard.toBeOrNotToBe();
+        for(let i=0;i<newBoard.length;i++){
+            if(newBoard[i]==undefined){
+                newBoard[i]='';
+            }
+            
+            subDivs[i].addEventListener('click',function(e){
+                console.log('triggered')
+                fillArea(e,player)
+                }
+                );
+            subDivs[i].innerHTML=newBoard[i];
         }
-        
-        subDivs[i].addEventListener('click',fillArea);
-        subDivs[i].innerHTML=newBoard[i];
-    }
+        enemyTurn();
     }
 
 
-    const fillArea=(e)=>{
+    const fillArea=(e,players)=>{
+        console.log(e.target);
         if(e.target.innerHTML===''){
-            e.target.innerHTML=player.sign
-            checkWin(player.sign);
+            e.target.innerHTML=player.sign;
+            let check=checkWin(players.sign);
+            if(!check){
+            enemyTurn();
+            }
+           // localStorage.setItem('_board');
         };     
     }
 
+    const enemyTurn=()=>{
+        let i=0;
+        while(i<100){
+        let enemyTurn=Math.floor( Math.random()*9 );
+        console.log(enemyTurn);
+            if(subDivs[enemyTurn].innerHTML===''){
+            subDivs[enemyTurn].innerHTML=enemy.sign;
+            checkWin(enemy.sign);
+            break;
+            }
+            i++;
+        }
+        
+        
+    }
 
     const checkWin=(sign)=>{
+        filledField++;
         for(let i=0;i<winningCons.length;i++){
            let winningCon=winningCons[i];
            let a= subDivs[winningCon[0]-1].innerHTML===sign;
@@ -101,30 +134,44 @@ const GameFlow=(()=>{
            if(a && b && c){
                console.log(sign ," wins");
                endGame();
-               break;
+               return true;
            }
         }
+        if (filledField==9){console.log('draw');
+        endGame();
+        };
+        return false;
     }
 
 
     const restartGame=()=>{
         localStorage.removeItem('_board');
+        filledField=0;
         startGame();
     }
     
     const endGame=()=>{
         for(let i=0;i<subDivs.length;i++){
-            subDivs[i].removeEventListener('click',fillArea);
+            subDivs[i].removeEventListener('click',function(e){
+                console.log('triggered')
+                fillArea(e,player)
+                }
+                );
         }
+        filledField=0;
+        x.disabled=false;
+        o.disabled=false;
     }
 
     restart.addEventListener('click',restartGame);
 
 
     return{chooseSide,startGame};
+
 })();
 
 const BtnControl=()=>{
     
 }
 GameFlow.chooseSide();
+
